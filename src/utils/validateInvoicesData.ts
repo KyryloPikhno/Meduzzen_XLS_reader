@@ -14,13 +14,20 @@ export const checkMandatoryFields = (row: string[]) => {
   const validationErrors: string[] = [];
 
   mandatoryFields.forEach((field, index) => {
-    if (
-      typeof row[index] === "undefined" ||
-      row[index] === null ||
-      row[index].trim() === ""
-    ) {
+    if (typeof row[index] === "undefined" || row[index] === null) {
       validationErrors.push(`Missing ${field}`);
     }
   });
+
   return validationErrors;
+};
+
+export const validateInvoicesData = (invoicesData: string[][]) => {
+  return invoicesData.map((row) => {
+    const validationErrors = checkMandatoryFields(row);
+    return {
+      ...row,
+      validationErrors,
+    };
+  });
 };

@@ -1,7 +1,8 @@
+import { validateInvoicesData } from "../utils/validateInvoicesData";
+import { findCurrencyRates } from "../utils/findCurrencyRates";
 import { NextFunction, Request, Response } from "express";
 import * as XLSX from "xlsx";
 import moment from "moment";
-import { checkMandatoryFields } from "../utils/checkMandatoryFields";
 
 enum REQUIRED_COLUMN {
   INVOICE = "Invoice #",
@@ -50,15 +51,12 @@ export const post = async (req: Request, res: Response, next: NextFunction) => {
       );
     });
 
-    const invoicesDataWithValidation = invoicesData.map((row) => {
-      const validationErrors = checkMandatoryFields(row);
-      return {
-        ...row,
-        validationErrors,
-      };
-    });
+    const currencyRates = findCurrencyRates(rows);
+
+    const invoicesDataWithValidation = validateInvoicesData(invoicesData);
 
     res.json({
+      // currencyRates,
       InvoicingMonth,
       invoicesData: invoicesDataWithValidation,
     });
