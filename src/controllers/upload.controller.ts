@@ -14,25 +14,12 @@ export const post = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const workbook = XLSX.readFile(req.file.path);
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const data = XLSX.utils.sheet_to_json(worksheet);
-
-    const invoicingMonth = req.body.invoicingMonth;
-    const currencyRates: Record<string, number> = {};
-
-    const invoicesData = data
-      .filter((row: any) => row.Status === "ready" || row["Invoice #"])
-      .map((row: any) => {
-        const validationErrors: string[] = [];
-
-        return { ...row, validationErrors };
-      });
+    console.log(workbook);
 
     res.json({
-      InvoicingMonth: invoicingMonth,
-      currencyRates,
-      invoicesData,
+      InvoicingMonth: "invoicingMonth",
+      // currencyRates,
+      // invoicesData,
     });
   } catch (e) {
     next(e);
