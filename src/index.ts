@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
-import { uploadRouter } from "./routes/upload.router";
+import { uploadFileRouter } from "./routes/uploadFile.router";
 import bodyParser from "body-parser";
 import express from "express";
 
@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
   res.json("Welcome on XLS reader server");
 });
 
-app.use("/upload", uploadRouter);
+app.use("/upload", uploadFileRouter);
 
 const errorHandler: ErrorRequestHandler = (
   err,

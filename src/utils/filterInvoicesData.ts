@@ -1,9 +1,5 @@
 import { IInvoiceObject } from "../inerfaces";
-
-enum REQUIRED_COLUMN {
-  INVOICE = "Invoice #",
-  STATUS = "Status",
-}
+import { REQUIRED_COLUMN } from "../enums";
 
 export const filterInvoicesData = (rows: string[][]) => {
   const headerRowIndex = rows.findIndex(

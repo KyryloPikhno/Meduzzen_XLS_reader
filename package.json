@@ -9,7 +9,7 @@
     "dev": "nodemon dist/index.js",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
-    "u": "curl -X POST \"http://localhost:3000/upload?invoicingMonth=2024-03\" -F \"file=@/Users/mac/Desktop/Test_task.xlsx\""
+    "upload": "curl -X POST \"http://localhost:3000/upload?invoicingMonth=2024-03\" -F \"file=@/Users/mac/Desktop/Test_task.xlsx\""
   },
   "keywords": [],
   "author": "Kirill_Pikhno",

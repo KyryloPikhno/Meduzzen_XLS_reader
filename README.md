@@ -13,3 +13,8 @@ Script to load the file Test_task.xlsx
 ```bash
 curl -X POST "http://localhost:3000/upload?invoicingMonth=2024-03" -F "file=@/Users/<YOUR USER>/<YOUR PATH>/Test_task.xlsx
 ```
+
+or use this setup for Postman
+```bash
+http://localhost:3000/upload?invoicingMonth=2024-03
+```

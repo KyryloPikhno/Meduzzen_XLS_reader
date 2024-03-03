@@ -9,6 +9,7 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
+    "@typescript-eslint/no-unused-vars": 0,
     "@typescript-eslint/no-var-requires": 0,
   },
 };

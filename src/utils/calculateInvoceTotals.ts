@@ -24,7 +24,9 @@ export const calculateInvoiceTotals = (
 
     return {
       ...invoice,
-      "Invoice Total": invoiceTotal,
+      "Invoice Total": isNaN(invoiceTotal)
+        ? null
+        : `${Math.trunc(invoiceTotal * 100) / 100} ${invoiceCurrency ? invoiceCurrency.toUpperCase() : ""}`,
     };
   });
 };
