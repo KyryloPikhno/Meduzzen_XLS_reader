@@ -1,13 +1,9 @@
-import { validateInvoicesData } from "../utils/validateInvoicesData";
+import { findInvoicingMonthFromFile } from "../utils/findInvoicingMonthFromFile";
+import { calculateInvoiceTotals } from "../utils/calculateInvoceTotals";
+import { filterInvoicesData } from "../utils/filterInvoicesData";
 import { findCurrencyRates } from "../utils/findCurrencyRates";
 import { NextFunction, Request, Response } from "express";
 import * as XLSX from "xlsx";
-import moment from "moment";
-
-enum REQUIRED_COLUMN {
-  INVOICE = "Invoice #",
-  STATUS = "Status",
-}
 
 export const post = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,50 +11,27 @@ export const post = async (req: Request, res: Response, next: NextFunction) => {
       res.status(400).send("No file uploaded.");
       return;
     }
+
     const workbook = XLSX.read(req.file.buffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     const rows: string[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-    let InvoicingMonth = "";
-
-    rows.forEach((row) => {
-      row.forEach((cell) => {
-        const dateMoment = moment(cell, "MMM YYYY", true);
-        if (dateMoment.isValid()) InvoicingMonth = dateMoment.format("YYYY-MM");
-      });
-    });
-
-    let headerRowIndex = -1;
-
-    rows.forEach((row, index) => {
-      if (
-        row.includes(REQUIRED_COLUMN.INVOICE) ||
-        row.includes(REQUIRED_COLUMN.STATUS)
-      )
-        headerRowIndex = index;
-    });
-
-    const headers = rows[headerRowIndex] as string[];
-
-    const statusColumnIndex = headers.indexOf(REQUIRED_COLUMN.STATUS);
-    const invoiceColumnIndex = headers.indexOf(REQUIRED_COLUMN.INVOICE);
-
-    const invoicesData = rows.slice(headerRowIndex + 1).filter((row) => {
-      return (
-        row[statusColumnIndex] === "Ready" ||
-        typeof row[invoiceColumnIndex] === "string"
-      );
-    });
-
+    const invoicesData = filterInvoicesData(rows);
+    const InvoicingMonth = findInvoicingMonthFromFile(rows);
     const currencyRates = findCurrencyRates(rows);
-
-    const invoicesDataWithValidation = validateInvoicesData(invoicesData);
+    const invoicesDataWithInvoiceTotals = calculateInvoiceTotals(
+      invoicesData,
+      currencyRates,
+    );
+    // const invoicesDataWithValidation =
+    //   validateInvoicesData(invoicesDataObjects);
 
     res.json({
-      // currencyRates,
+      length: invoicesDataWithInvoiceTotals.length,
       InvoicingMonth,
-      invoicesData: invoicesDataWithValidation,
+      currencyRates,
+      invoicesData: invoicesDataWithInvoiceTotals,
     });
   } catch (e) {
     next(e);
