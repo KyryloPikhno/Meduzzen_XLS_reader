@@ -24,7 +24,7 @@ http://localhost:3000/upload?invoicingMonth=2024-03
 
 ## 
 
-File for uploading [Test_task.xlsx](https://github.com/KyryloPikhno/Meduzzen_XLS_reader/files/14474228/Test_task.xlsx)
+File for uploading: [Test_task.xlsx](https://github.com/KyryloPikhno/Meduzzen_XLS_reader/files/14474228/Test_task.xlsx)
 
 Test task: https://docs.google.com/document/d/1AzzNz020jp5SwqVKkUviKBsAbnAM2s5aXyzaM6qqoH0/edit
 
