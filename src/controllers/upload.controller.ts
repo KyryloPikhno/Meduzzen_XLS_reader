@@ -1,10 +1,10 @@
-import express, { NextFunction, Request, Response } from "express";
+import { findInvoicingMonthFromFile } from "../utils/findInvoicingMonthFromFile";
+import { calculateInvoiceTotals } from "../utils/calculateInvoceTotals";
+import { validateInvoicesData } from "../utils/validateInvoicesData";
+import { filterInvoicesData } from "../utils/filterInvoicesData";
+import { findCurrencyRates } from "../utils/findCurrencyRates";
+import { NextFunction, Request, Response } from "express";
 import * as XLSX from "xlsx";
-
-interface MulterRequest extends express.Request {
-  file?: Express.Multer.File;
-  body: { invoicingMonth: string };
-}
 
 export const post = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -13,13 +13,29 @@ export const post = async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    const workbook = XLSX.readFile(req.file.path);
-    console.log(workbook);
+    const workbook = XLSX.read(req.file.buffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const rows: string[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+    const invoicesData = filterInvoicesData(rows);
+    const invoicingMonth = findInvoicingMonthFromFile(rows);
+    const currencyRates = findCurrencyRates(rows);
+    const invoicesDataWithInvoiceTotals = calculateInvoiceTotals(
+      invoicesData,
+      currencyRates,
+    );
+    const invoicesDataWithValidation = validateInvoicesData(
+      invoicesDataWithInvoiceTotals,
+      currencyRates,
+      req.file.originalname,
+    );
 
     res.json({
-      InvoicingMonth: "invoicingMonth",
-      // currencyRates,
-      // invoicesData,
+      length: invoicesDataWithValidation.length,
+      InvoicingMonth: invoicingMonth,
+      currencyRates,
+      invoicesData: invoicesDataWithValidation,
     });
   } catch (e) {
     next(e);

@@ -4,6 +4,6 @@ import multer from "multer";
 
 const router = Router();
 
-const upload = multer({ dest: "uploads" });
+const upload = multer({ storage: multer.memoryStorage() });
 
 export const uploadRouter = router.post("/", upload.single("file"), post);
