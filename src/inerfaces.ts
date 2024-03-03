@@ -1,5 +1,5 @@
 export interface IInvoice {
-  [key: string]: string | number | string[];
+  [key: string]: string | number | null | string[];
 }
 
 export interface ICurrencyRate {

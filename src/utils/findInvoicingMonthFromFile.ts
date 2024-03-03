@@ -1,16 +1,24 @@
 import moment from "moment";
 
-export const findInvoicingMonthFromFile = (rows: string[][]) => {
-  let invoicingMonth = "";
+const YYYY_MM = "YYYY-MM";
+const MMM_YYYY = "MMM YYYY";
+
+export const findInvoicingMonthFromFile = (
+  rows: string[][],
+  invoicingMonthFromParams: string | null,
+) => {
+  let invoicingMonthFromFile = invoicingMonthFromParams
+    ? moment(invoicingMonthFromParams)
+    : moment();
 
   rows.some((row) =>
     row.some((cell) => {
-      const dateMoment = moment(cell, "MMM YYYY", true);
-      if (dateMoment.isValid()) invoicingMonth = dateMoment.format("YYYY-MM");
+      const dateMoment = moment(cell, MMM_YYYY, true);
+      if (dateMoment.isValid()) invoicingMonthFromFile = dateMoment;
 
       return false;
     }),
   );
 
-  return invoicingMonth;
+  return invoicingMonthFromFile.format(YYYY_MM);
 };
