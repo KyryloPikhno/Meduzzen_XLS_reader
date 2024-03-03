@@ -5,11 +5,11 @@ export const calculateInvoiceTotals = (
   currencyRates: ICurrencyRate,
 ) => {
   return invoicesData.map((invoice) => {
-    const totalPrice = invoice["Total Price"];
-    const invoiceCurrency = "ILS";
+    const totalPrice = Number(invoice["Total Price"]);
+    const invoiceCurrency = invoice["Invoice Currency"];
     const itemPriceCurrency = invoice["Item Price Currency"];
 
-    let invoiceTotal = totalPrice ? Number(totalPrice) : null;
+    let invoiceTotal = totalPrice;
 
     if (
       totalPrice &&
@@ -19,8 +19,7 @@ export const calculateInvoiceTotals = (
     ) {
       const conversionRateFrom = currencyRates[itemPriceCurrency.toUpperCase()];
       const conversionRateTo = currencyRates[invoiceCurrency.toUpperCase()];
-      invoiceTotal =
-        (Number(totalPrice) * conversionRateFrom) / conversionRateTo;
+      invoiceTotal = (totalPrice * conversionRateFrom) / conversionRateTo;
     }
 
     return {

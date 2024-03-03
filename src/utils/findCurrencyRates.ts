@@ -1,9 +1,7 @@
-interface ICurrencyRates {
-  [key: string]: number;
-}
+import { ICurrencyRate } from "../inerfaces";
 
 export const findCurrencyRates = (rows: string[][]) => {
-  const currencyRates: ICurrencyRates = {};
+  const currencyRates: ICurrencyRate = {};
 
   rows
     .filter((row) => row.some((item) => item.toString().includes("Rate")))

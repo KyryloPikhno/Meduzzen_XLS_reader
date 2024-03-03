@@ -1,5 +1,6 @@
 import { findInvoicingMonthFromFile } from "../utils/findInvoicingMonthFromFile";
 import { calculateInvoiceTotals } from "../utils/calculateInvoceTotals";
+import { validateInvoicesData } from "../utils/validateInvoicesData";
 import { filterInvoicesData } from "../utils/filterInvoicesData";
 import { findCurrencyRates } from "../utils/findCurrencyRates";
 import { NextFunction, Request, Response } from "express";
@@ -18,20 +19,23 @@ export const post = async (req: Request, res: Response, next: NextFunction) => {
     const rows: string[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
     const invoicesData = filterInvoicesData(rows);
-    const InvoicingMonth = findInvoicingMonthFromFile(rows);
+    const invoicingMonth = findInvoicingMonthFromFile(rows);
     const currencyRates = findCurrencyRates(rows);
     const invoicesDataWithInvoiceTotals = calculateInvoiceTotals(
       invoicesData,
       currencyRates,
     );
-    // const invoicesDataWithValidation =
-    //   validateInvoicesData(invoicesDataObjects);
+    const invoicesDataWithValidation = validateInvoicesData(
+      invoicesDataWithInvoiceTotals,
+      currencyRates,
+      req.file.originalname,
+    );
 
     res.json({
-      length: invoicesDataWithInvoiceTotals.length,
-      InvoicingMonth,
+      length: invoicesDataWithValidation.length,
+      InvoicingMonth: invoicingMonth,
       currencyRates,
-      invoicesData: invoicesDataWithInvoiceTotals,
+      invoicesData: invoicesDataWithValidation,
     });
   } catch (e) {
     next(e);
